@@ -1,0 +1,35 @@
+{
+    "name": "majalis-al-warraqeen",
+    "version": "1.0.0",
+    "description": "A modern web project for an elite reading club.",
+    "main": "src/js/app.js",
+    "scripts": {
+        "build": "webpack --mode=production",
+        "start": "webpack serve --mode=development"
+    },
+    "keywords": [
+        "reading-club",
+        "books",
+        "webpack",
+        "bootstrap",
+        "sass"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@supabase/supabase-js": "^2.93.3",
+        "bootstrap": "^5.3.3",
+        "dotenv-webpack": "^8.1.1",
+        "sweetalert2": "^11.10.8"
+    },
+    "devDependencies": {
+        "css-loader": "^7.1.1",
+        "html-webpack-plugin": "^5.6.0",
+        "sass": "^1.77.2",
+        "sass-loader": "^14.2.1",
+        "style-loader": "^4.0.0",
+        "webpack": "^5.91.0",
+        "webpack-cli": "^5.1.4",
+        "webpack-dev-server": "^5.0.4"
+    }
+}

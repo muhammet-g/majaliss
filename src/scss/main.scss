@@ -1,0 +1,588 @@
+/*
+Majalis Al-Warraqeen - SCSS Theme
+*/
+
+// 1. Google Fonts Import
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+// 2. Custom Theme Variables
+$theme-navy: #041E3B;
+$theme-gold: #CD9B14;
+$text-light: #E5E5E5;
+$card-dark: #0a2744;
+$hover-gold: #e6b025;
+
+// 3. Bootstrap Configuration & Import
+$direction: rtl;
+@import "bootstrap/scss/bootstrap";
+
+// 4. Mixins
+@mixin golden-button {
+  background: linear-gradient(135deg, $theme-gold 0%, $hover-gold 100%);
+  border: none;
+  color: $theme-navy;
+  font-weight: bold;
+  padding: 12px 30px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba($theme-gold, 0.4);
+  }
+}
+
+@mixin dark-card {
+  background: linear-gradient(135deg, $card-dark 0%, darken($card-dark, 3%) 100%);
+  border: 1px solid rgba($theme-gold, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: rgba($theme-gold, 0.5);
+    box-shadow: 0 10px 30px rgba($theme-gold, 0.2);
+    transform: translateY(-5px);
+  }
+}
+
+@mixin glow-effect {
+  box-shadow: 0 0 20px rgba($theme-gold, 0.3),
+              0 0 40px rgba($theme-gold, 0.2),
+              0 0 60px rgba($theme-gold, 0.1);
+}
+
+// 5. Base Styles
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: linear-gradient(180deg, $theme-navy 0%, darken($theme-navy, 5%) 100%);
+  color: $text-light;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: $theme-gold;
+  font-weight: bold;
+}
+
+// 6. Navigation
+.navbar {
+  background: linear-gradient(90deg, darken($theme-navy, 5%) 0%, $theme-navy 100%);
+  border-bottom: 2px solid rgba($theme-gold, 0.3);
+  padding: 1rem 0;
+  
+  .navbar-brand {
+    color: $theme-gold !important;
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      text-shadow: 0 0 10px rgba($theme-gold, 0.5);
+    }
+    
+    i {
+      margin-left: 10px;
+    }
+  }
+  
+  .nav-link {
+    color: $text-light !important;
+    margin: 0 10px;
+    transition: all 0.3s ease;
+    
+    &:hover, &.active {
+      color: $theme-gold !important;
+      transform: translateY(-2px);
+    }
+    
+    i {
+      margin-left: 5px;
+    }
+  }
+
+  // Auth section in navbar
+  #auth-section {
+    .btn-golden {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    #member-area {
+      gap: 1rem;
+      margin-left: 1rem;
+
+      #user-name {
+        font-size: 0.95rem;
+      }
+
+      #logout-btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        border-color: $theme-gold !important;
+        color: $theme-gold !important;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background-color: $theme-gold;
+          color: $theme-navy !important;
+        }
+      }
+    }
+  }
+}
+
+// 7. Buttons
+.btn-golden {
+  @include golden-button;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: darken(#6c757d, 10%);
+  }
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+}
+
+// 8. Page Transitions
+#contentArea {
+  min-height: 60vh;
+}
+
+.page-transition-exit {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.page-transition-enter {
+  animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 9. Home Page Styles
+.home-page {
+  .hero-section {
+    padding: 60px 0;
+    
+    .book-3d-container {
+      perspective: 1000px;
+      margin-bottom: 30px;
+    }
+    
+    .book-3d {
+      width: 200px;
+      height: 280px;
+      margin: 0 auto;
+      transform-style: preserve-3d;
+      animation: rotateBook 6s infinite ease-in-out;
+      
+      .book-cover {
+        @include dark-card;
+        @include glow-effect;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, $theme-navy 0%, $card-dark 100%);
+        
+        h2 {
+          margin: 0;
+          text-align: center;
+          line-height: 1.5;
+        }
+      }
+    }
+    
+    .hero-title {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      text-shadow: 0 0 20px rgba($theme-gold, 0.5);
+    }
+    
+    .hero-subtitle {
+      font-size: 1.3rem;
+      color: darken($text-light, 10%);
+    }
+  }
+  
+  .luxury-card {
+    @include dark-card;
+    
+    .luxury-text {
+      font-size: 1.1rem;
+      line-height: 2;
+      text-align: justify;
+    }
+    
+    .features {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 20px;
+      
+      .feature-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        
+        i {
+          font-size: 2rem;
+          color: $theme-gold;
+        }
+        
+        span {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+  
+  .section-title {
+    font-size: 2.5rem;
+    position: relative;
+    
+    &::after {
+      content: '';
+      display: block;
+      width: 100px;
+      height: 3px;
+      background: $theme-gold;
+      margin: 15px auto;
+    }
+  }
+}
+
+@keyframes rotateBook {
+  0%, 100% { transform: rotateY(-15deg) rotateX(5deg); }
+  50% { transform: rotateY(15deg) rotateX(-5deg); }
+}
+
+// 10. Library Page Styles
+.library-page {
+  .page-title {
+    font-size: 2.5rem;
+    
+    i {
+      margin-left: 15px;
+    }
+  }
+  
+  .book-card {
+    @include dark-card;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    
+    &.locked {
+      cursor: not-allowed;
+      opacity: 0.6;
+      
+      .lock-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba($theme-navy, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        
+        i {
+          font-size: 3rem;
+          color: $theme-gold;
+        }
+      }
+    }
+    
+    .book-cover-img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    
+    .book-card-body {
+      .book-title {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
+
+// 11. Book Details Page
+.book-details-page {
+  .book-detail-cover {
+    width: 100%;
+    border-radius: 12px;
+    @include glow-effect;
+  }
+  
+  .book-detail-title {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .book-meta {
+    margin-bottom: 20px;
+  }
+  
+  .book-description {
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+  
+  .interactive-zone {
+    @include dark-card;
+    
+    .zone-title {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      
+      i {
+        margin-left: 10px;
+      }
+    }
+    
+    .star-rating {
+      display: flex;
+      gap: 10px;
+      font-size: 2rem;
+      
+      i {
+        color: $theme-gold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          transform: scale(1.2);
+        }
+      }
+    }
+    
+    .comment-box {
+      background-color: rgba($theme-navy, 0.5);
+      border: 1px solid rgba($theme-gold, 0.3);
+      color: $text-light;
+      border-radius: 8px;
+      padding: 15px;
+      
+      &:focus {
+        border-color: $theme-gold;
+        box-shadow: 0 0 10px rgba($theme-gold, 0.3);
+        outline: none;
+      }
+    }
+    
+    .locked-content {
+      padding: 40px;
+      
+      .locked-icon {
+        font-size: 4rem;
+        color: $theme-gold;
+        margin-bottom: 20px;
+      }
+    }
+  }
+}
+
+// 12. Admin Page
+.admin-page {
+  .admin-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    
+    .btn-filter {
+      padding: 8px 20px;
+      border: 2px solid rgba($theme-gold, 0.3);
+      background: transparent;
+      color: $text-light;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover, &.active {
+        background: $theme-gold;
+        color: $theme-navy;
+        border-color: $theme-gold;
+      }
+    }
+  }
+  
+  .admin-table {
+    @include dark-card;
+    width: 100%;
+    
+    thead {
+      background: rgba($theme-gold, 0.1);
+      
+      th {
+        color: $theme-gold;
+        padding: 15px;
+        border-bottom: 2px solid $theme-gold;
+      }
+    }
+    
+    tbody {
+      tr {
+        border-bottom: 1px solid rgba($theme-gold, 0.1);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background: rgba($theme-gold, 0.05);
+        }
+        
+        td {
+          padding: 15px;
+          vertical-align: middle;
+        }
+      }
+    }
+    
+    .status-badge {
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      
+      &.status-active {
+        background: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+      }
+      
+      &.status-pending {
+        background: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+      }
+    }
+    
+    .role-badge {
+      color: $theme-gold;
+      font-weight: bold;
+    }
+    
+    .btn-action {
+      padding: 5px 15px;
+      margin: 0 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &.btn-approve {
+        background: rgba(40, 167, 69, 0.3);
+        color: #28a745;
+        
+        &:hover {
+          background: #28a745;
+          color: white;
+        }
+      }
+      
+      &.btn-reject {
+        background: rgba(220, 53, 69, 0.3);
+        color: #dc3545;
+        
+        &:hover {
+          background: #dc3545;
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+// 13. Badges
+.badge {
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  
+  &.badge-read {
+    background: rgba(40, 167, 69, 0.3);
+    color: #28a745;
+  }
+  
+  &.badge-current {
+    background: rgba($theme-gold, 0.3);
+    color: $theme-gold;
+  }
+  
+  &.badge-upcoming {
+    background: rgba(23, 162, 184, 0.3);
+    color: #17a2b8;
+  }
+}
+
+// 14. Footer
+footer {
+  border-top: 2px solid rgba($theme-gold, 0.3);
+  background: rgba(darken($theme-navy, 5%), 0.8);
+  color: darken($text-light, 20%);
+}
+// 15. Loading Spinner
+.loading-spinner {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($theme-navy, 0.95);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  .spinner-border {
+    width: 60px;
+    height: 60px;
+    border-width: 4px;
+
+    &.text-warning {
+      color: $theme-gold !important;
+    }
+  }
+
+  p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+  }
+}
