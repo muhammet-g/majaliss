@@ -32,24 +32,48 @@ async function getUserByEmail(email) {
 }
 
 /**
- * تسجيل دخول المستخدم
+ * تسجيل دخول المستخدم - مع التحقق من كلمة المرور
+ * ⚠️ الكلمات المرور يجب أن تُخزن مُشفرة في قاعدة البيانات
  * @param {string} email - البريد الإلكتروني
+ * @param {string} password - كلمة المرور
  * @returns {Promise<Object|null>} بيانات المستخدم إذا نجح التسجيل
  */
-export async function loginUser(email) {
+export async function loginUser(email, password) {
     try {
-        // البحث عن المستخدم في قاعدة البيانات
-        const user = await getUserByEmail(email);
+        // استخدام Supabase Auth للمصادقة الآمنة
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
 
-        if (!user) {
-            // المستخدم غير موجود
+        if (error) {
+            // خطأ في المصادقة
             Swal.fire({
                 icon: 'error',
-                title: 'بريد غير مسجل',
-                text: 'هذا البريد الإلكتروني غير مسجل في النظام',
+                title: 'فشل تسجيل الدخول',
+                text: 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
                 confirmButtonText: 'حسناً',
                 customClass: {
                     confirmButton: 'btn-golden'
+                },
+                background: '#041E3B',
+                color: '#E5E5E5'
+            });
+            return null;
+        }
+
+        // البحث عن بيانات العضو في جدول members
+        const user = await getUserByEmail(email);
+
+        if (!user) {
+            // المستخدم موجود في Auth لكن ليس في members
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ في البيانات',
+                text: 'حسابك غير كامل. يرجى التواصل مع الإدارة.',
+                confirmButtonText: 'حسناً',
+                customClass: {
+                    confirmButton: 'btn-danger'
                 },
                 background: '#041E3B',
                 color: '#E5E5E5'
@@ -90,8 +114,10 @@ export async function loginUser(email) {
             return null;
         }
 
-        // المستخدم نشط - حفظ في localStorage
+        // ✅ المستخدم موثق وحالته نشطة - حفظ في localStorage
         localStorage.setItem('loggedUser', JSON.stringify(user));
+        // ⚠️ تخزين token من Supabase للتحقق من الجانب الخادمي
+        localStorage.setItem('supabaseSession', JSON.stringify(data.session));
         console.log('✅ تم تسجيل الدخول بنجاح:', user.name);
 
         Swal.fire({
@@ -205,7 +231,7 @@ export function updateLoggedUser(updatedUser) {
 
 /**
  * عرض نموذج تسجيل الدخول
- * استخدام SweetAlert2 لجمع البريد الإلكتروني
+ * استخدام SweetAlert2 لجمع البريد وكلمة المرور
  */
 export async function showLoginForm() {
     const { value: email } = await Swal.fire({
@@ -214,7 +240,7 @@ export async function showLoginForm() {
         inputLabel: 'أدخل بريدك الإلكتروني',
         inputPlaceholder: 'example@example.com',
         showCancelButton: true,
-        confirmButtonText: 'دخول',
+        confirmButtonText: 'التالي',
         cancelButtonText: 'إلغاء',
         customClass: {
             confirmButton: 'btn-golden',
@@ -229,27 +255,47 @@ export async function showLoginForm() {
         }
     });
 
-    if (email) {
-        // تحقق من صحة البريد الإلكتروني
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'بريد غير صحيح',
-                text: 'يرجى إدخال بريد إلكتروني صحيح',
-                confirmButtonText: 'حسناً',
-                customClass: {
-                    confirmButton: 'btn-danger'
-                },
-                background: '#041E3B',
-                color: '#E5E5E5'
-            });
-            return null;
-        }
+    if (!email) return null;
 
-        // محاولة تسجيل الدخول
-        return await loginUser(email);
+    // التحقق من صحة البريد الإلكتروني
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'بريد غير صحيح',
+            text: 'يرجى إدخال بريد إلكتروني صحيح',
+            confirmButtonText: 'حسناً',
+            customClass: {
+                confirmButton: 'btn-danger'
+            },
+            background: '#041E3B',
+            color: '#E5E5E5'
+        });
+        return null;
     }
 
-    return null;
+    // طلب كلمة المرور
+    const { value: password } = await Swal.fire({
+        title: 'كلمة المرور',
+        input: 'password',
+        inputLabel: 'أدخل كلمة مرورك',
+        inputPlaceholder: '••••••••',
+        showCancelButton: true,
+        confirmButtonText: 'دخول',
+        cancelButtonText: 'إلغاء',
+        customClass: {
+            confirmButton: 'btn-golden',
+            cancelButton: 'btn-secondary'
+        },
+        background: '#041E3B',
+        color: '#E5E5E5',
+        inputAttributes: {
+            autocomplete: 'current-password'
+        }
+    });
+
+    if (!password) return null;
+
+    // محاولة تسجيل الدخول
+    return await loginUser(email, password);
 }

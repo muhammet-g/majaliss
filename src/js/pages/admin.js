@@ -8,12 +8,13 @@ import { adminApproveMember, adminRejectMember, fetchMembers } from '../services
 
 /**
  * دالة عرض صفحة لوحة التحكم
- * متاحة فقط للمشرفين
+ * متاحة فقط للمشرفين (التحقق من الخادم)
  * @param {Object} currentUser - المستخدم الحالي
  * @param {Array} members - قائمة الأعضاء
  */
 function renderAdminPage(currentUser, members) {
     // التحقق من أن المستخدم مشرف
+    // ملاحظة: يجب أن يكون هناك تحقق من جانب الخادم أيضاً
     if (!currentUser || currentUser.role !== 'admin') {
         document.getElementById('contentArea').innerHTML = `
             <div class="text-center">

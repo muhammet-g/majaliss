@@ -24,19 +24,40 @@ export async function fetchBooks() {
 
 /**
  * Fetch all members from the 'members' table
+ * Non-admins only see: id, name, status, created_at (no emails/phones)
+ * Admins see all data
  * @returns {Promise<Array>} Array of member objects
  */
 export async function fetchMembers() {
     try {
+        const currentUser = await getCurrentUserFromDB();
+
+        if (!currentUser) {
+            throw new Error('User must be logged in to view members');
+        }
+
+        // If admin - fetch all data
+        if (currentUser.role === 'admin') {
+            const { data, error } = await supabase
+                .from('members')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                throw new Error(`Failed to fetch members: ${error.message}`);
+            }
+            return data || [];
+        }
+
+        // Non-admin - only fetch limited fields (no email/phone)
         const { data, error } = await supabase
             .from('members')
-            .select('*')
+            .select('id, name, status, created_at')
             .order('created_at', { ascending: false });
 
         if (error) {
             throw new Error(`Failed to fetch members: ${error.message}`);
         }
-
         return data || [];
     } catch (error) {
         console.error('Error fetching members:', error);
@@ -73,6 +94,35 @@ export async function submitJoinRequest(memberData) {
     } catch (error) {
         console.error('Error submitting join request:', error);
         throw error;
+    }
+}
+
+/**
+ * Get current user data from database using Supabase Auth session
+ * @returns {Promise<Object|null>} User object with id, email, role, name or null
+ */
+export async function getCurrentUserFromDB() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (!session?.user?.id) {
+            return null;
+        }
+
+        const { data, error } = await supabase
+            .from('members')
+            .select('id, email, role, name')
+            .eq('id', session.user.id)
+            .single();
+
+        if (error && error.code !== 'PGRST116') {
+            throw error;
+        }
+
+        return data || null;
+    } catch (error) {
+        console.error('Error fetching current user:', error);
+        return null;
     }
 }
 
