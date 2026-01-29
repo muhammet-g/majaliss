@@ -4,7 +4,7 @@
     "description": "A modern web project for an elite reading club.",
     "main": "src/js/app.js",
     "scripts": {
-        "build": "webpack --mode=production",
+        "build": "webpack --mode=production && copy public\\_redirects dist\\_redirects",
         "start": "webpack serve --mode=development"
     },
     "keywords": [
