@@ -164,8 +164,8 @@ async function updateAuthUI() {
 
         if (isAuthenticated) {
             // حالة: مسجل دخول ✅
-            loginBtn.style.display = 'none';
-            memberArea.style.display = 'flex';
+            loginBtn.style.setProperty('display', 'none', 'important');
+            memberArea.style.setProperty('display', 'flex', 'important');
             userName.textContent = localUser.name;
 
             // تحديث شريط التنقل بناءً على دور المستخدم
@@ -174,8 +174,8 @@ async function updateAuthUI() {
             console.log('✅ Auth UI: User logged in -', localUser.name);
         } else {
             // حالة: زائر ❌
-            loginBtn.style.display = 'block';
-            memberArea.style.display = 'none';
+            loginBtn.style.setProperty('display', 'block', 'important');
+            memberArea.style.setProperty('display', 'none', 'important');
 
             // إخفاء عناصر الإدارة للضيوف
             updateNavbarByRole(null);
@@ -192,8 +192,8 @@ async function updateAuthUI() {
     } catch (error) {
         console.error('❌ Error updating auth UI:', error);
         // Fallback: show login button on error
-        if (loginBtn) loginBtn.style.display = 'block';
-        if (memberArea) memberArea.style.display = 'none';
+        if (loginBtn) loginBtn.style.setProperty('display', 'block', 'important');
+        if (memberArea) memberArea.style.setProperty('display', 'none', 'important');
     }
 }
 
