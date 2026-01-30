@@ -52,14 +52,32 @@ async function initializeAppData() {
     showLoadingSpinner();
 
     try {
-        // Fetch books and members from Supabase
-        const [books, members] = await Promise.all([
-            fetchBooks(),
-            fetchMembers()
-        ]);
+        // Check authentication status first
+        const { data: { session } } = await supabase.auth.getSession();
+        const hasValidSession = session?.user?.id;
 
-        globalBooks = books;
-        globalMembers = members;
+        // Always fetch books (public data)
+        try {
+            globalBooks = await fetchBooks();
+            console.log('✅ Books loaded successfully');
+        } catch (booksError) {
+            console.warn('⚠️ Failed to load books:', booksError);
+            globalBooks = []; // Continue with empty books array
+        }
+
+        // Only fetch members if user has a valid session (protected data)
+        if (hasValidSession) {
+            try {
+                globalMembers = await fetchMembers();
+                console.log('✅ Members loaded successfully');
+            } catch (membersError) {
+                console.warn('⚠️ Failed to load members:', membersError);
+                globalMembers = []; // Continue with empty members array
+            }
+        } else {
+            globalMembers = []; // No session, skip members
+            console.log('ℹ️ Skipping members fetch (no active session)');
+        }
 
         // Check if user is logged in from localStorage
         if (isLoggedIn()) {
@@ -75,16 +93,16 @@ async function initializeAppData() {
         initializeRouter();
     } catch (error) {
         hideLoadingSpinner();
-        console.error('Failed to initialize app data:', error);
+        console.error('Failed to initialize app:', error);
 
-        Swal.fire({
-            icon: 'error',
-            title: 'Connection Failed',
-            text: 'Unable to connect to the database. Please check your Supabase configuration and try again.',
-            confirmButtonColor: '#CD9B14',
-            background: '#041E3B',
-            color: '#ffffff',
-        });
+        // Initialize router anyway to show UI
+        globalBooks = [];
+        globalMembers = [];
+        currentUser = null;
+        initializeRouter();
+
+        // Show error but don't block the app
+        console.warn('⚠️ App initialized with limited functionality');
     }
 }
 
