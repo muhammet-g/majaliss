@@ -586,3 +586,321 @@ footer {
     margin-top: 1.5rem;
   }
 }
+
+// 16. Reviews & Ratings Section
+#reviews-section {
+  margin-top: 3rem;
+  padding: 2rem 0;
+
+  .section-title {
+    font-size: 2rem;
+    color: $theme-gold;
+    margin-bottom: 2rem;
+    text-align: center;
+
+    i {
+      margin-left: 10px;
+    }
+  }
+
+  // Reviews Summary Card
+  .reviews-summary-card {
+    @include dark-card;
+    text-align: center;
+    padding: 2rem;
+    margin-bottom: 2rem;
+
+    .summary-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+
+      .average-rating {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+
+        .rating-number {
+          font-size: 3rem;
+          font-weight: bold;
+          color: $theme-gold;
+        }
+
+        .rating-stars {
+          display: flex;
+          gap: 5px;
+
+          i {
+            font-size: 1.5rem;
+            color: #ffc107;
+          }
+        }
+      }
+
+      .total-reviews {
+        font-size: 1.3rem;
+        color: $text-light;
+
+        span {
+          font-weight: bold;
+          color: $theme-gold;
+        }
+      }
+    }
+  }
+
+  // Add Review Form
+  .add-review-form {
+    @include dark-card;
+    padding: 2rem;
+    margin-bottom: 2rem;
+
+    .form-title {
+      color: $theme-gold;
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+
+      i {
+        margin-left: 10px;
+      }
+    }
+
+    .rating-input {
+      margin-bottom: 1.5rem;
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: $text-light;
+      }
+
+      .star-rating-input {
+        display: flex;
+        gap: 10px;
+        font-size: 2rem;
+
+        i {
+          color: #6c757d;
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          &:hover,
+          &.bi-star-fill {
+            color: #ffc107;
+            transform: scale(1.2);
+          }
+        }
+      }
+    }
+
+    .comment-input {
+      margin-bottom: 1.5rem;
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: $text-light;
+      }
+
+      textarea {
+        background-color: rgba($theme-navy, 0.5);
+        border: 1px solid rgba($theme-gold, 0.3);
+        color: $text-light;
+        border-radius: 8px;
+        padding: 1rem;
+        resize: vertical;
+        transition: all 0.3s ease;
+
+        &:focus {
+          border-color: $theme-gold;
+          box-shadow: 0 0 10px rgba($theme-gold, 0.3);
+          outline: none;
+        }
+
+        &::placeholder {
+          color: rgba($text-light, 0.5);
+        }
+      }
+    }
+  }
+
+  // Locked Review Form
+  .locked-review-form {
+    @include dark-card;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    color: rgba($text-light, 0.6);
+
+    i {
+      font-size: 3rem;
+      color: $theme-gold;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+  }
+
+  // Reviews List
+  .reviews-list {
+    .list-title {
+      color: $theme-gold;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+
+      i {
+        margin-left: 10px;
+      }
+    }
+
+    // Individual Review Card
+    .review-card {
+      @include dark-card;
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+
+      .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+
+        .reviewer-info {
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+
+          .reviewer-avatar {
+            i {
+              font-size: 3rem;
+              color: $theme-gold;
+            }
+          }
+
+          .reviewer-details {
+            .reviewer-name {
+              color: $theme-gold;
+              font-size: 1.1rem;
+              margin-bottom: 0.3rem;
+              font-weight: bold;
+            }
+
+            .review-rating {
+              display: flex;
+              gap: 3px;
+
+              i {
+                font-size: 1rem;
+                color: #ffc107;
+
+                &.bi-star {
+                  color: #6c757d;
+                }
+              }
+            }
+          }
+        }
+
+        .review-date {
+          color: rgba($text-light, 0.6);
+          font-size: 0.9rem;
+        }
+      }
+
+      .review-body {
+        .review-comment {
+          color: $text-light;
+          line-height: 1.8;
+          margin: 0;
+          padding-right: 4rem;
+
+          @media (max-width: 768px) {
+            padding-right: 0;
+          }
+        }
+      }
+
+      &:hover {
+        transform: translateY(-3px);
+      }
+    }
+
+    // No Reviews Message
+    .no-reviews {
+      @include dark-card;
+      padding: 3rem 2rem;
+      text-align: center;
+      color: rgba($text-light, 0.6);
+
+      i {
+        font-size: 4rem;
+        color: $theme-gold;
+        margin-bottom: 1rem;
+      }
+
+      p {
+        font-size: 1.2rem;
+        margin: 0;
+      }
+    }
+
+    // Loading Reviews
+    .loading-reviews {
+      @include dark-card;
+      padding: 3rem 2rem;
+
+      .spinner-border {
+        width: 3rem;
+        height: 3rem;
+      }
+    }
+  }
+}
+
+// Responsive adjustments for reviews
+@media (max-width: 768px) {
+  #reviews-section {
+    .reviews-summary-card .summary-content {
+      gap: 1.5rem;
+
+      .average-rating .rating-number {
+        font-size: 2.5rem;
+      }
+
+      .total-reviews {
+        font-size: 1.1rem;
+      }
+    }
+
+    .add-review-form {
+      padding: 1.5rem;
+
+      .rating-input .star-rating-input {
+        font-size: 1.5rem;
+        gap: 8px;
+      }
+    }
+
+    .reviews-list .review-card {
+      padding: 1rem;
+
+      .review-header {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .reviewer-info .reviewer-avatar i {
+          font-size: 2.5rem;
+        }
+      }
+    }
+  }
+}
