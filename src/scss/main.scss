@@ -113,6 +113,11 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   // Auth section in navbar
+  // 🎭 Hide auth buttons by default until we verify user status
+  #login-btn,
+  #member-area {
+    display: none !important; // Hidden until JavaScript determines auth state
+  }
   #auth-section {
     .btn-golden {
       padding: 8px 16px;

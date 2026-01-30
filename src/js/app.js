@@ -144,27 +144,56 @@ function updateActiveNavLink() {
 /**
  * Update UI based on login status
  * Show login button when not logged in, member area when logged in
+ * 🎭 Verifies auth state with Supabase directly to prevent UI glitches
  */
-function updateAuthUI() {
+async function updateAuthUI() {
     const loginBtn = document.getElementById('login-btn');
     const memberArea = document.getElementById('member-area');
     const userName = document.getElementById('user-name');
     const logoutBtn = document.getElementById('logout-btn');
 
-    if (isLoggedIn()) {
-        const user = getLoggedUser();
-        loginBtn.style.display = 'none';
-        memberArea.style.display = 'flex';
-        userName.textContent = user.name;
+    try {
+        // ✅ Step 1: Check Supabase Auth session directly
+        const { data: { session } } = await supabase.auth.getSession();
 
-        // تحديث شريط التنقل بناءً على دور المستخدم
-        updateNavbarByRole(user);
-    } else {
-        loginBtn.style.display = 'block';
-        memberArea.style.display = 'none';
+        // ✅ Step 2: Cross-check with localStorage
+        const localUser = isLoggedIn() ? getLoggedUser() : null;
 
-        // إخفاء عناصر الإدارة للضيوف
-        updateNavbarByRole(null);
+        // ✅ Step 3: Determine actual auth state
+        const isAuthenticated = session?.user && localUser;
+
+        if (isAuthenticated) {
+            // حالة: مسجل دخول ✅
+            loginBtn.style.display = 'none';
+            memberArea.style.display = 'flex';
+            userName.textContent = localUser.name;
+
+            // تحديث شريط التنقل بناءً على دور المستخدم
+            updateNavbarByRole(localUser);
+
+            console.log('✅ Auth UI: User logged in -', localUser.name);
+        } else {
+            // حالة: زائر ❌
+            loginBtn.style.display = 'block';
+            memberArea.style.display = 'none';
+
+            // إخفاء عناصر الإدارة للضيوف
+            updateNavbarByRole(null);
+
+            console.log('ℹ️ Auth UI: Guest user (not logged in)');
+
+            // Clean up localStorage if session is invalid
+            if (!session?.user && localUser) {
+                localStorage.removeItem('loggedUser');
+                localStorage.removeItem('supabaseSession');
+                console.log('🧹 Cleaned up invalid localStorage session');
+            }
+        }
+    } catch (error) {
+        console.error('❌ Error updating auth UI:', error);
+        // Fallback: show login button on error
+        if (loginBtn) loginBtn.style.display = 'block';
+        if (memberArea) memberArea.style.display = 'none';
     }
 }
 
