@@ -350,38 +350,29 @@ export async function handleSignup() {
             }
 
             try {
-                // 2. إنشاء حساب المصادقة (Auth User)
+                // 🔒 SECURITY: إنشاء حساب المصادقة فقط
+                // قاعدة البيانات ستقوم بإنشاء السجل في جدول members تلقائياً
+                // عبر Database Trigger (handle_new_user) - هذا يمنع التلاعب بالـ role/status
                 const { data: authData, error: authError } = await supabase.auth.signUp({
                     email: email,
                     password: password,
                     options: {
-                        data: { full_name: name }
+                        data: { 
+                            full_name: name,
+                            phone: phone,      // حفظ الهاتف في metadata
+                            reason: reason     // حفظ سبب الانضمام في metadata
+                        }
                     }
                 });
 
                 if (authError) throw authError;
 
                 console.log('✅ Auth account created for:', email);
-
-                // 3. إضافة البيانات لجدول الأعضاء (بحالة معلق)
-                const { error: dbError } = await supabase
-                    .from('members')
-                    .insert([{
-                        email: email,       // الربط عبر الإيميل
-                        name: name,
-                        phone: phone,
-                        reason: reason || 'لم يُذكر',
-                        status: 'pending',  // الحالة الافتراضية: قيد الانتظار
-                        role: 'member'      // الرتبة الافتراضية: عضو
-                    }]);
-
-                if (dbError) {
-                    // في حال فشل قاعدة البيانات
-                    console.error("Database Error:", dbError);
-                    throw new Error("فشل في حفظ بيانات العضوية. الرجاء المحاولة لاحقاً.");
-                }
-
-                console.log('✅ Member data saved with pending status');
+                console.log('🔄 Database trigger will automatically create member record with pending status');
+                
+                // ✅ لم نعد بحاجة لكود .from('members').insert(...) هنا!
+                // الـ Trigger في قاعدة البيانات يتولى ذلك بشكل آمن
+                
                 return true; // نجاح العملية
 
             } catch (error) {
@@ -390,7 +381,7 @@ export async function handleSignup() {
                 Swal.showValidationMessage(
                     `فشل التسجيل: ${error.message || error.error_description || 'خطأ غير معروف'}`
                 );
-                return false; 
+                return false;
             }
         },
         allowOutsideClick: () => !Swal.isLoading()
