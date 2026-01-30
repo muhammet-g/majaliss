@@ -8,5 +8,5 @@ to = "/index.html"
 status = 200
 
 [dev]
-command = "npm start"
-port = 8080
+command = "npm run dev"
+port = 3000

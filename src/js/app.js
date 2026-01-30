@@ -179,8 +179,8 @@ async function testSupabaseConnection() {
     try {
         // ✅ Test 1: Verify environment variables are loaded
         console.log('📍 Test 1: Checking environment variables...');
-        const supabaseUrl = process.env.SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_ANON_KEY;
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
         if (supabaseUrl && supabaseKey) {
             console.log('✅ Environment variables loaded successfully');

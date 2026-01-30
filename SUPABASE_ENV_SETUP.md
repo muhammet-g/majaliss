@@ -3,6 +3,7 @@
 **التاريخ:** 30 يناير 2026  
 **المشكلة:** `supabaseUrl is required` على Netlify  
 **الحل:** تعيين متغيرات البيئة في Netlify Dashboard
+**⚠️ ملاحظة:** تم تحويل المشروع إلى Vite - الأسماء الجديدة تبدأ بـ `VITE_`
 
 ---
 
@@ -17,7 +18,7 @@ Uncaught Error: supabaseUrl is required.
 ### السبب:
 - ملف `.env` **لا يُرسل إلى GitHub** (محمي في `.gitignore`)
 - Netlify **لا تملك** متغيرات البيئة تلقائياً
-- التطبيق يحاول قراءة `process.env.SUPABASE_URL` و `process.env.SUPABASE_ANON_KEY` وهما غير موجودة
+- التطبيق يحاول قراءة `import.meta.env.VITE_SUPABASE_URL` و `import.meta.env.VITE_SUPABASE_ANON_KEY` وهما غير موجودة
 
 ---
 
@@ -28,19 +29,19 @@ Uncaught Error: supabaseUrl is required.
 اذهب إلى **Supabase Dashboard** وجمع:
 
 ```
-1. SUPABASE_URL:
+1. VITE_SUPABASE_URL:
    - اذهب إلى Project Settings → API
    - انسخ: "Project URL" (تبدأ بـ https://...)
 
-2. SUPABASE_ANON_KEY:
+2. VITE_SUPABASE_ANON_KEY:
    - في نفس الصفحة (Project Settings → API)
    - انسخ: "anon public" (المفتاح الطويل)
 ```
 
 **مثال:**
 ```
-SUPABASE_URL = https://abc123def456.supabase.co
-SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+VITE_SUPABASE_URL = https://abc123def456.supabase.co
+VITE_SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 ---
