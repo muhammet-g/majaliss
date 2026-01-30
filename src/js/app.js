@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 import Router from './router.js';
 import { fetchBooks, fetchMembers, getMemberStatus } from './services.js';
 import { supabase } from './supabaseClient.js';
-import { isLoggedIn, getLoggedUser } from './auth.js';
+import { isLoggedIn, getLoggedUser, updateNavbarByRole } from './auth.js';
 
 // استيراد دوال عرض الصفحات
 import { renderHomePage } from './pages/home.js';
@@ -157,45 +157,14 @@ function updateAuthUI() {
         memberArea.style.display = 'flex';
         userName.textContent = user.name;
 
-        // Show "Add Book" link for admin users
-        updateAdminNavigation(user);
+        // تحديث شريط التنقل بناءً على دور المستخدم
+        updateNavbarByRole(user);
     } else {
         loginBtn.style.display = 'block';
         memberArea.style.display = 'none';
 
-        // Hide "Add Book" link for non-logged-in users
-        updateAdminNavigation(null);
-    }
-}
-
-/**
- * Update admin navigation visibility based on user role
- * @param {Object|null} user - Current user object or null
- */
-function updateAdminNavigation(user) {
-    const navbarNav = document.querySelector('.navbar-nav');
-
-    // Remove existing "Add Book" link if it exists
-    const existingAddBookLink = document.getElementById('add-book-nav-item');
-    if (existingAddBookLink) {
-        existingAddBookLink.remove();
-    }
-
-    // Add "Add Book" link only if user is admin
-    if (user && user.role === 'admin') {
-        const addBookNavItem = document.createElement('li');
-        addBookNavItem.className = 'nav-item';
-        addBookNavItem.id = 'add-book-nav-item';
-        addBookNavItem.innerHTML = `
-            <a class="nav-link" href="#/add-book">
-                <i class="bi bi-plus-circle"></i>
-                إضافة كتاب
-            </a>
-        `;
-
-        // Insert before the admin panel link
-        const adminNavItem = navbarNav.querySelector('a[href="#/admin"]').parentElement;
-        navbarNav.insertBefore(addBookNavItem, adminNavItem);
+        // إخفاء عناصر الإدارة للضيوف
+        updateNavbarByRole(null);
     }
 }
 

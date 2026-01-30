@@ -106,6 +106,12 @@ h1, h2, h3, h4, h5, h6 {
     }
   }
 
+  // 🔒 SECURITY: Admin navigation items hidden by default
+  #nav-dashboard,
+  #nav-add-book {
+    display: none; // Hidden by default, shown only for admin role via JavaScript
+  }
+
   // Auth section in navbar
   #auth-section {
     .btn-golden {

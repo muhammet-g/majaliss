@@ -7,6 +7,37 @@ import Swal from 'sweetalert2';
 import { supabase } from './supabaseClient.js';
 
 /**
+ * تحديث شريط التنقل بناءً على دور المستخدم
+ * يُظهر أو يخفي عناصر الإدارة (Dashboard, Add Book) حسب الصلاحيات
+ * @param {Object|null} user - بيانات المستخدم الحالي أو null
+ */
+export function updateNavbarByRole(user) {
+    const navDashboard = document.getElementById('nav-dashboard');
+    const navAddBook = document.getElementById('nav-add-book');
+
+    // إخفاء عناصر الإدارة بشكل افتراضي
+    if (navDashboard) {
+        navDashboard.style.display = 'none';
+    }
+    if (navAddBook) {
+        navAddBook.style.display = 'none';
+    }
+
+    // إظهار عناصر الإدارة فقط إذا كان المستخدم مشرفاً
+    if (user && user.role === 'admin') {
+        if (navDashboard) {
+            navDashboard.style.display = 'block';
+        }
+        if (navAddBook) {
+            navAddBook.style.display = 'block';
+        }
+        console.log('✅ Admin navigation visible for:', user.name);
+    } else {
+        console.log('ℹ️ Admin navigation hidden (non-admin user)');
+    }
+}
+
+/**
  * جلب بيانات المستخدم من Supabase بناءً على البريد الإلكتروني
  * @param {string} email - البريد الإلكتروني للمستخدم
  * @returns {Promise<Object|null>} بيانات المستخدم أو null
@@ -147,6 +178,9 @@ export async function loginUser(email, password) {
         // ⚠️ تخزين token من Supabase للتحقق من الجانب الخادمي
         localStorage.setItem('supabaseSession', JSON.stringify(data.session));
         console.log('✅ تم تسجيل الدخول بنجاح:', user.name);
+
+        // تحديث شريط التنقل بناءً على دور المستخدم
+        updateNavbarByRole(user);
 
         Swal.fire({
             icon: 'success',

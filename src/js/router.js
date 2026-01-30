@@ -47,6 +47,28 @@ class Router {
         const [path, ...params] = hash.split('/').filter(Boolean);
         const route = path ? `/${path}` : '/';
 
+        // 🔒 SECURITY: Protect admin routes
+        const adminRoutes = ['/admin', '/add-book'];
+        if (adminRoutes.includes(route)) {
+            const loggedUser = JSON.parse(localStorage.getItem('loggedUser') || 'null');
+            if (!loggedUser || loggedUser.role !== 'admin') {
+                console.warn('⚠️ Access denied: Admin route accessed by non-admin user');
+                import('sweetalert2').then(({ default: Swal }) => {
+                    Swal.fire({
+                        title: 'وصول محظور',
+                        text: 'هذه الصفحة متاحة للمشرفين فقط',
+                        icon: 'error',
+                        confirmButtonText: 'حسناً',
+                        customClass: { confirmButton: 'btn-golden' },
+                        background: '#041E3B',
+                        color: '#E5E5E5'
+                    });
+                });
+                this.navigate('/'); // Redirect to home
+                return;
+            }
+        }
+
         // التحقق من وجود المسار المطلوب
         if (this.routes[route]) {
             this.currentRoute = route; // حفظ المسار الحالي
