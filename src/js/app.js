@@ -19,6 +19,7 @@ import { renderHomePage } from './pages/home.js';
 import { renderLibraryPage } from './pages/library.js';
 import { renderBookDetailsPage } from './pages/bookDetails.js';
 import { renderAdminPage } from './pages/admin.js';
+import { renderAddBookPage } from './pages/addBook.js';
 
 // Global state for shared data
 let globalBooks = [];
@@ -117,6 +118,7 @@ function initializeRouter() {
     router.register('/library', () => renderLibraryPage(currentUser, globalBooks));
     router.register('/book', (params) => renderBookDetailsPage(params, currentUser, globalBooks));
     router.register('/admin', () => renderAdminPage(currentUser, globalMembers));
+    router.register('/add-book', () => renderAddBookPage(currentUser));
 
     // Update active nav link on route change
     window.addEventListener('hashchange', updateActiveNavLink);
@@ -154,9 +156,46 @@ function updateAuthUI() {
         loginBtn.style.display = 'none';
         memberArea.style.display = 'flex';
         userName.textContent = user.name;
+
+        // Show "Add Book" link for admin users
+        updateAdminNavigation(user);
     } else {
         loginBtn.style.display = 'block';
         memberArea.style.display = 'none';
+
+        // Hide "Add Book" link for non-logged-in users
+        updateAdminNavigation(null);
+    }
+}
+
+/**
+ * Update admin navigation visibility based on user role
+ * @param {Object|null} user - Current user object or null
+ */
+function updateAdminNavigation(user) {
+    const navbarNav = document.querySelector('.navbar-nav');
+
+    // Remove existing "Add Book" link if it exists
+    const existingAddBookLink = document.getElementById('add-book-nav-item');
+    if (existingAddBookLink) {
+        existingAddBookLink.remove();
+    }
+
+    // Add "Add Book" link only if user is admin
+    if (user && user.role === 'admin') {
+        const addBookNavItem = document.createElement('li');
+        addBookNavItem.className = 'nav-item';
+        addBookNavItem.id = 'add-book-nav-item';
+        addBookNavItem.innerHTML = `
+            <a class="nav-link" href="#/add-book">
+                <i class="bi bi-plus-circle"></i>
+                إضافة كتاب
+            </a>
+        `;
+
+        // Insert before the admin panel link
+        const adminNavItem = navbarNav.querySelector('a[href="#/admin"]').parentElement;
+        navbarNav.insertBefore(addBookNavItem, adminNavItem);
     }
 }
 

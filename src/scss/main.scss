@@ -904,3 +904,248 @@ footer {
     }
   }
 }
+
+// 17. Add Book Page
+.add-book-page {
+  max-width: 900px;
+  margin: 0 auto;
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+
+    .page-title {
+      font-size: 2.5rem;
+      color: $theme-gold;
+      margin-bottom: 1rem;
+
+      i {
+        margin-left: 15px;
+      }
+    }
+
+    .page-subtitle {
+      color: rgba($text-light, 0.7);
+      font-size: 1.1rem;
+    }
+  }
+
+  .add-book-form-container {
+    @include dark-card;
+    padding: 2.5rem;
+
+    .add-book-form {
+      .form-group {
+        margin-bottom: 2rem;
+
+        .form-label {
+          display: block;
+          color: $text-light;
+          font-weight: bold;
+          margin-bottom: 0.75rem;
+          font-size: 1.05rem;
+
+          i {
+            margin-left: 8px;
+            color: $theme-gold;
+          }
+
+          .required {
+            color: #dc3545;
+            margin-right: 5px;
+          }
+
+          .optional {
+            color: rgba($text-light, 0.5);
+            font-weight: normal;
+            font-size: 0.9rem;
+          }
+        }
+
+        .form-control {
+          background-color: rgba($theme-navy, 0.5);
+          border: 2px solid rgba($theme-gold, 0.3);
+          color: $text-light;
+          border-radius: 8px;
+          padding: 0.85rem 1rem;
+          font-size: 1rem;
+          transition: all 0.3s ease;
+
+          &:focus {
+            border-color: $theme-gold;
+            box-shadow: 0 0 15px rgba($theme-gold, 0.3);
+            outline: none;
+            background-color: rgba($theme-navy, 0.7);
+          }
+
+          &::placeholder {
+            color: rgba($text-light, 0.4);
+          }
+        }
+
+        select.form-control {
+          cursor: pointer;
+
+          option {
+            background-color: $theme-navy;
+            color: $text-light;
+          }
+        }
+
+        textarea.form-control {
+          resize: vertical;
+          min-height: 120px;
+        }
+
+        // File Input Styling
+        .file-input-wrapper {
+          position: relative;
+
+          .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 2;
+          }
+
+          .file-input-info {
+            background-color: rgba($theme-navy, 0.5);
+            border: 2px dashed rgba($theme-gold, 0.4);
+            border-radius: 8px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+
+            i {
+              font-size: 3rem;
+              color: $theme-gold;
+              display: block;
+              margin-bottom: 1rem;
+            }
+
+            span {
+              display: block;
+              color: $text-light;
+              font-size: 1.1rem;
+              margin-bottom: 0.5rem;
+            }
+
+            small {
+              color: rgba($text-light, 0.6);
+              font-size: 0.9rem;
+            }
+
+            &:hover {
+              border-color: $theme-gold;
+              background-color: rgba($theme-gold, 0.05);
+              transform: translateY(-2px);
+            }
+          }
+        }
+
+        // Image Preview
+        .image-preview {
+          margin-top: 1rem;
+          position: relative;
+          display: inline-block;
+          max-width: 300px;
+
+          img {
+            width: 100%;
+            border-radius: 8px;
+            border: 2px solid rgba($theme-gold, 0.3);
+          }
+
+          .btn-remove-image {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba($theme-navy, 0.9);
+            border: 2px solid #dc3545;
+            color: #dc3545;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            i {
+              font-size: 1.5rem;
+            }
+
+            &:hover {
+              background-color: #dc3545;
+              color: white;
+              transform: scale(1.1);
+            }
+          }
+        }
+      }
+
+      // Form Actions
+      .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba($theme-gold, 0.2);
+
+        button {
+          min-width: 150px;
+          padding: 0.85rem 2rem;
+          font-size: 1.05rem;
+
+          i {
+            margin-left: 8px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments for Add Book page
+@media (max-width: 768px) {
+  .add-book-page {
+    .page-header .page-title {
+      font-size: 2rem;
+    }
+
+    .add-book-form-container {
+      padding: 1.5rem;
+
+      .add-book-form {
+        .form-group {
+          margin-bottom: 1.5rem;
+
+          .file-input-wrapper .file-input-info {
+            padding: 2rem 1rem;
+
+            i {
+              font-size: 2.5rem;
+            }
+
+            span {
+              font-size: 1rem;
+            }
+          }
+        }
+
+        .form-actions {
+          flex-direction: column;
+
+          button {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
