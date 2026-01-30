@@ -5,6 +5,7 @@
 
 import Swal from 'sweetalert2';
 import { submitJoinRequest } from '../services.js';
+import { signUp } from '../auth.js';
 
 /**
  * دالة عرض الصفحة الرئيسية
@@ -71,7 +72,7 @@ function renderHomePage() {
 }
 
 function showJoinForm() {
-    const steps = ['1', '2', '3', '4']; // خطوات النموذج الأربع
+    const steps = ['1', '2', '3', '4', '5']; // خطوات النموذج الخمس
 
     // إعداد SweetAlert2 بإعدادات مخصصة للنموذج
     const swalQueueStep = Swal.mixin({
@@ -123,12 +124,37 @@ function showJoinForm() {
         if (result.isConfirmed) {
             values[1] = result.value; // حفظ البريد الإلكتروني
 
-            // الخطوة الثالثة: طلب رقم الهاتف
+            // الخطوة الثالثة: طلب كلمة المرور
+            return swalQueueStep.fire({
+                title: 'كلمة المرور',
+                input: 'password',
+                inputPlaceholder: 'أدخل كلمة المرور (6 أحرف على الأقل)',
+                currentProgressStep: 2, // الخطوة الثالثة
+                inputAttributes: {
+                    autocomplete: 'new-password',
+                    minlength: '6',
+                    required: 'true'
+                },
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'يرجى إدخال كلمة المرور';
+                    }
+                    if (value.length < 6) {
+                        return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                    }
+                }
+            });
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            values[2] = result.value; // حفظ كلمة المرور
+
+            // الخطوة الرابعة: طلب رقم الهاتف
             return swalQueueStep.fire({
                 title: 'رقم الهاتف',
                 input: 'tel',
                 inputPlaceholder: '05xxxxxxxx',
-                currentProgressStep: 2, // الخطوة الثالثة
+                currentProgressStep: 3, // الخطوة الرابعة
                 inputValidator: (value) => {
                     // التحقق من صحة رقم الهاتف
                     if (!value) {
@@ -142,14 +168,14 @@ function showJoinForm() {
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            values[2] = result.value; // حفظ رقم الهاتف
+            values[3] = result.value; // حفظ رقم الهاتف
 
-            // الخطوة الرابعة: طلب سبب الانضمام
+            // الخطوة الخامسة: طلب سبب الانضمام
             return swalQueueStep.fire({
                 title: 'لماذا تريد الانضمام؟',
                 input: 'textarea',
                 inputPlaceholder: 'أخبرنا عن شغفك بالقراءة...',
-                currentProgressStep: 3, // الخطوة الرابعة والأخيرة
+                currentProgressStep: 4, // الخطوة الخامسة والأخيرة
                 confirmButtonText: 'إرسال الطلب',
                 inputValidator: (value) => {
                     // التحقق من أن النص لا يقل عن 20 حرفاً
@@ -161,7 +187,7 @@ function showJoinForm() {
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            values[3] = result.value; // حفظ سبب الانضمام
+            values[4] = result.value; // حفظ سبب الانضمام
 
             // إرسال البيانات إلى قاعدة البيانات
             submitMembershipRequest(values);
@@ -171,14 +197,15 @@ function showJoinForm() {
 
 /**
  * إرسال طلب الانضمام إلى قاعدة البيانات
- * @param {Array} values - مصفوفة تحتوي على [الاسم، البريد، الهاتف، السبب]
+ * @param {Array} values - مصفوفة تحتوي على [الاسم، البريد، كلمة المرور، الهاتف، السبب]
  */
 async function submitMembershipRequest(values) {
     const memberData = {
         name: values[0],
         email: values[1],
-        phone: values[2],
-        reason: values[3]
+        password: values[2],
+        phone: values[3],
+        reason: values[4]
     };
 
     try {
@@ -199,8 +226,33 @@ async function submitMembershipRequest(values) {
             color: '#E5E5E5'
         });
 
-        // إرسال البيانات إلى Supabase
-        const result = await submitJoinRequest(memberData);
+        // أولاً: إنشاء حساب مصادقة في Supabase Auth
+        try {
+            await signUp(memberData.email, memberData.password);
+        } catch (authError) {
+            // عرض رسالة خطأ إذا فشل إنشاء الحساب
+            Swal.fire({
+                title: 'خطأ في التسجيل',
+                text: `فشل إنشاء الحساب: ${authError.message}`,
+                icon: 'error',
+                confirmButtonText: 'حسناً',
+                customClass: {
+                    confirmButton: 'btn-danger'
+                },
+                background: '#041E3B',
+                color: '#E5E5E5'
+            });
+            return;
+        }
+
+        // ثانياً: إرسال البيانات إلى جدول members (بدون كلمة المرور)
+        const memberDataForDB = {
+            name: memberData.name,
+            email: memberData.email,
+            phone: memberData.phone,
+            reason: memberData.reason
+        };
+        const result = await submitJoinRequest(memberDataForDB);
 
         if (result) {
             // عرض رسالة النجاح

@@ -32,6 +32,34 @@ async function getUserByEmail(email) {
 }
 
 /**
+ * تسجيل مستخدم جديد في Supabase Auth
+ * @param {string} email - البريد الإلكتروني
+ * @param {string} password - كلمة المرور (6 أحرف على الأقل)
+ * @returns {Promise<Object|null>} بيانات المستخدم إذا نجح التسجيل
+ */
+export async function signUp(email, password) {
+    try {
+        // استخدام Supabase Auth لإنشاء حساب جديد
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+        });
+
+        if (error) {
+            // خطأ في إنشاء الحساب
+            console.error('Signup error:', error);
+            throw new Error(error.message);
+        }
+
+        console.log('✅ تم إنشاء حساب المصادقة بنجاح:', email);
+        return data;
+    } catch (error) {
+        console.error('Error during signup:', error);
+        throw error;
+    }
+}
+
+/**
  * تسجيل دخول المستخدم - مع التحقق من كلمة المرور
  * ⚠️ الكلمات المرور يجب أن تُخزن مُشفرة في قاعدة البيانات
  * @param {string} email - البريد الإلكتروني
