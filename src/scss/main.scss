@@ -288,6 +288,17 @@ h1, h2, h3, h4, h5, h6 {
   50% { transform: rotateY(15deg) rotateX(-5deg); }
 }
 
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.6; 
+    transform: scale(1.05);
+  }
+}
+
 // 10. Library Page Styles
 .library-page {
   .page-title {
@@ -295,6 +306,26 @@ h1, h2, h3, h4, h5, h6 {
     
     i {
       margin-left: 15px;
+    }
+  }
+
+  // Empty library state
+  .empty-library {
+    @include dark-card;
+    padding: 4rem 2rem;
+    margin: 2rem auto;
+    max-width: 600px;
+    
+    i {
+      animation: pulse 2s infinite;
+    }
+
+    h3 {
+      margin-bottom: 1rem;
+    }
+
+    p {
+      margin-bottom: 2rem;
     }
   }
   
@@ -547,6 +578,12 @@ h1, h2, h3, h4, h5, h6 {
   &.badge-upcoming {
     background: rgba(23, 162, 184, 0.3);
     color: #17a2b8;
+  }
+
+  &.badge-category {
+    background: rgba(156, 39, 176, 0.3);
+    color: #9c27b0;
+    margin-left: 10px;
   }
 }
 

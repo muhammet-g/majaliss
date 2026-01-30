@@ -3,7 +3,6 @@
  * يعرض معلومات تفصيلية عن كتاب محدد مع إمكانية التقييم والتعليق
  */
 
-import { books } from '../data.js';
 import Swal from 'sweetalert2';
 import { supabase } from '../supabaseClient.js';
 
@@ -11,17 +10,37 @@ import { supabase } from '../supabaseClient.js';
  * دالة عرض صفحة تفاصيل الكتاب
  * @param {Array} params - معاملات URL (تحتوي على معرف الكتاب)
  * @param {Object} currentUser - المستخدم الحالي
+ * @param {Array} books - قائمة الكتب من Supabase
  */
-function renderBookDetailsPage(params, currentUser) {
+async function renderBookDetailsPage(params, currentUser, books = []) {
     const bookId = params[0]; // الحصول على معرف الكتاب من المعاملات
-    const book = books.find(b => b.id === parseInt(bookId)); // البحث عن الكتاب
 
-    // التحقق من وجود الكتاب
-    if (!book) {
+    // Fetch book from Supabase directly by ID
+    let book = null;
+
+    try {
+        const { data, error } = await supabase
+            .from('books')
+            .select('*')
+            .eq('id', bookId)
+            .single();
+
+        if (error || !data) {
+            throw new Error('Book not found');
+        }
+
+        book = data;
+    } catch (error) {
+        console.error('Error fetching book:', error);
         document.getElementById('contentArea').innerHTML = `
             <div class="text-center">
-                <h2>الكتاب غير موجود</h2>
-                <button onclick="window.location.hash='#/library'" class="btn-golden mt-3">عودة للمكتبة</button>
+                <i class="bi bi-exclamation-triangle" style="font-size: 4rem; color: #CD9B14;"></i>
+                <h2 class="mt-3">الكتاب غير موجود</h2>
+                <p style="color: #E5E5E5; opacity: 0.7;">لم نتمكن من العثور على الكتاب المطلوب</p>
+                <button onclick="window.location.hash='#/library'" class="btn-golden mt-3">
+                    <i class="bi bi-arrow-right"></i>
+                    عودة للمكتبة
+                </button>
             </div>
         `;
         return;
@@ -35,19 +54,27 @@ function renderBookDetailsPage(params, currentUser) {
         <div class="book-details-page">
             <div class="row">
                 <div class="col-md-4">
-                    <img src="${book.coverImage}" class="book-detail-cover" alt="${book.title}">
+                    <img src="${book.cover_url || 'https://via.placeholder.com/400x600/041E3B/CD9B14?text=Book+Cover'}" class="book-detail-cover" alt="${book.title}">
                 </div>
                 <div class="col-md-8">
                     <h1 class="book-detail-title">${book.title}</h1>
+                    <h4 class="book-author mb-3">
+                        <i class="bi bi-person"></i>
+                        ${book.author || 'مؤلف غير معروف'}
+                    </h4>
                     <div class="book-meta">
-                        <span class="badge ${book.status === 'read' ? 'badge-read' : 'badge-upcoming'}">
-                            ${book.status === 'read' ? 'مقروء' : 'قادم'}
+                        ${book.category ? `<span class="badge badge-category">${book.category}</span>` : ''}
+                        <span class="badge ${getStatusBadgeClass(book.status)}">
+                            ${getStatusText(book.status)}
                         </span>
                     </div>
                     
                     <div class="book-description mt-4">
+                        <h5><i class="bi bi-info-circle"></i> نبذة عن الكتاب</h5>
                         <p>
-                            هذا الكتاب من الكتب المميزة في مكتبة مجالس الوراقين. 
+                            ${book.description || 'هذا الكتاب من الكتب المميزة في مكتبة مجالس الوراقين. انضم إلى النقاشات الحية مع الأعضاء الآخرين لتبادل الآراء والأفكار.'}
+                        </p>
+                    </div> 
                             انضم إلى النقاشات الحية مع الأعضاء الآخرين لتبادل الآراء والأفكار.
                         </p>
                     </div>
@@ -551,6 +578,34 @@ function setupReviewFormListeners(bookId, currentUser) {
             });
         }
     });
+}
+
+/**
+ * دالة الحصول على CSS class لشارة حالة الكتاب
+ * @param {string} status - حالة الكتاب
+ * @returns {string} CSS class
+ */
+function getStatusBadgeClass(status) {
+    const classes = {
+        'read': 'badge-read',
+        'current': 'badge-current',
+        'upcoming': 'badge-upcoming'
+    };
+    return classes[status] || 'badge-upcoming';
+}
+
+/**
+ * دالة الحصول على نص حالة الكتاب
+ * @param {string} status - حالة الكتاب
+ * @returns {string} النص بالعربية
+ */
+function getStatusText(status) {
+    const texts = {
+        'read': 'مقروء',
+        'current': 'قيد القراءة',
+        'upcoming': 'قادم'
+    };
+    return texts[status] || 'قادم';
 }
 
 export { renderBookDetailsPage };
