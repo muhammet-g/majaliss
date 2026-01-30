@@ -396,59 +396,6 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1.1rem;
     line-height: 1.8;
   }
-  
-  .interactive-zone {
-    @include dark-card;
-    
-    .zone-title {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-      
-      i {
-        margin-left: 10px;
-      }
-    }
-    
-    .star-rating {
-      display: flex;
-      gap: 10px;
-      font-size: 2rem;
-      
-      i {
-        color: $theme-gold;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        
-        &:hover {
-          transform: scale(1.2);
-        }
-      }
-    }
-    
-    .comment-box {
-      background-color: rgba($theme-navy, 0.5);
-      border: 1px solid rgba($theme-gold, 0.3);
-      color: $text-light;
-      border-radius: 8px;
-      padding: 15px;
-      
-      &:focus {
-        border-color: $theme-gold;
-        box-shadow: 0 0 10px rgba($theme-gold, 0.3);
-        outline: none;
-      }
-    }
-    
-    .locked-content {
-      padding: 40px;
-      
-      .locked-icon {
-        font-size: 4rem;
-        color: $theme-gold;
-        margin-bottom: 20px;
-      }
-    }
-  }
 }
 
 // 12. Admin Page
